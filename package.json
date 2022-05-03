@@ -4,7 +4,8 @@
     "main": "server/index.js",
     "scripts": {
         "start": "node server/index",
-        "host": "node standaloneClient/index"
+        "host": "node standaloneClient/index",
+        "build": "node standaloneClient/build minify"
     },
     "dependencies": {
         "google-closure-library": "20180506.0.0",
@@ -13,7 +14,9 @@
         "express-ws": "latest",
         "express-minify": "latest",
         "cors": "latest",
-        "forwarded-for": "latest"
+        "forwarded-for": "latest",
+        "javascript-obfuscator": "latest",
+        "uglify-js": "latest"
     },
     "engines": {
         "node": "16.x"
