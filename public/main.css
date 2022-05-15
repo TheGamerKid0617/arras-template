@@ -173,6 +173,29 @@ div {
     /* IE10+ */
 }
 
+.serverSelector {
+    height: 25px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 13px;
+    padding-left: 10px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.15);
+}
+
+.serverSelector tr {
+    color: #828282;
+    cursor: pointer;
+}
+
+.serverSelector tr.selected {
+    color: #8ABC3F;
+    cursor: default;
+}
+
 #startMenu {
     position: relative;
     margin: auto;

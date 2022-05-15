@@ -27,7 +27,8 @@ server.get("/lib/json/gamemodeData.json", function(request, response) {
     response.send(JSON.stringify({
         gameMode: c.gameModeName,
         players: views.length,
-        code: [c.MODE, c.MODE === "ffa" ? "f" : c.TEAMS, c.secondaryGameMode].join("-")
+        code: [c.MODE, c.MODE === "ffa" ? "f" : c.TEAMS, c.secondaryGameMode].join("-"),
+        ip: c.host + ":" + c.port
     }));
 });
 server.get("/serverData.json", function(request, response) {

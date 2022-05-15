@@ -9,7 +9,7 @@
     },
     "dependencies": {
         "google-closure-library": "20180506.0.0",
-        "node-fetch": "latest",
+        "node-fetch": "^2.6.7",
         "express": "latest",
         "express-ws": "latest",
         "express-minify": "latest",

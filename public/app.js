@@ -14,8 +14,7 @@ import {
     color
 } from "./lib/color.js";
 import * as socketStuff from "./lib/socketInit.js";
-(async function(util, global, config, Canvas, color, socketStuff) {
-    window.serverAdd = (await (await fetch("/serverData.json")).json()).ip;
+(async function (util, global, config, Canvas, color, socketStuff) {
     let {
         socketInit,
         gui,
@@ -35,7 +34,6 @@ import * as socketStuff from "./lib/socketInit.js";
             document.getElementById("patchNotes").innerHTML += `<div><b>${changelog[0][0].slice(1).trim()}</b>: ${changelog[0].slice(1).join(":") || "Update lol"}<ul>${changelog.slice(1).map(line => `<li>${line.slice(1).trim()}</li>`).join("")}</ul><hr></div>`;
         });
     });
-    util.pullJSON("mockups").then(data => global.mockups = data);
     let animations = ((module) => {
         class Animation {
             constructor(start, to, smoothness = .05) {
@@ -110,48 +108,48 @@ import * as socketStuff from "./lib/socketInit.js";
 
     function getColor(colorNumber) {
         switch (colorNumber) {
-            case 0:
-                return color.teal;
-            case 1:
-                return color.lgreen;
-            case 2:
-                return color.orange;
-            case 3:
-                return color.yellow;
-            case 4:
-                return color.lavender;
-            case 5:
-                return color.pink;
-            case 6:
-                return color.vlgrey;
-            case 7:
-                return color.lgrey;
-            case 8:
-                return color.guiwhite;
-            case 9:
-                return color.black;
-            case 10:
-                return color.blue;
-            case 11:
-                return color.green;
-            case 12:
-                return color.red;
-            case 13:
-                return color.gold;
-            case 14:
-                return color.purple;
-            case 15:
-                return color.magenta;
-            case 16:
-                return color.grey;
-            case 17:
-                return color.dgrey;
-            case 18:
-                return color.white;
-            case 19:
-                return color.guiblack;
-            default:
-                return '#FF0000';
+        case 0:
+            return color.teal;
+        case 1:
+            return color.lgreen;
+        case 2:
+            return color.orange;
+        case 3:
+            return color.yellow;
+        case 4:
+            return color.lavender;
+        case 5:
+            return color.pink;
+        case 6:
+            return color.vlgrey;
+        case 7:
+            return color.lgrey;
+        case 8:
+            return color.guiwhite;
+        case 9:
+            return color.black;
+        case 10:
+            return color.blue;
+        case 11:
+            return color.green;
+        case 12:
+            return color.red;
+        case 13:
+            return color.gold;
+        case 14:
+            return color.purple;
+        case 15:
+            return color.magenta;
+        case 16:
+            return color.grey;
+        case 17:
+            return color.dgrey;
+        case 18:
+            return color.white;
+        case 19:
+            return color.guiblack;
+        default:
+            return '#FF0000';
         }
     }
 
@@ -163,29 +161,29 @@ import * as socketStuff from "./lib/socketInit.js";
 
     function getZoneColor(cell, real) {
         switch (cell) {
-            case 'bas1':
-            case 'bap1':
-            case 'dom1':
-                return color.blue;
-            case 'bas2':
-            case 'bap2':
-            case 'dom2':
-                return color.green;
-            case 'bas3':
-            case 'bap3':
-            case 'dom3':
-            case 'boss':
-                return color.red;
-            case 'bas4':
-            case 'bap4':
-            case 'dom4':
-                return color.magenta;
-            case 'nest':
-                return (real) ? color.purple : color.lavender;
-            case 'dom0':
-                return color.gold;
-            default:
-                return (real) ? color.white : color.lgrey;
+        case 'bas1':
+        case 'bap1':
+        case 'dom1':
+            return color.blue;
+        case 'bas2':
+        case 'bap2':
+        case 'dom2':
+            return color.green;
+        case 'bas3':
+        case 'bap3':
+        case 'dom3':
+        case 'boss':
+            return color.red;
+        case 'bas4':
+        case 'bap4':
+        case 'dom4':
+            return color.magenta;
+        case 'nest':
+            return (real) ? color.purple : color.lavender;
+        case 'dom0':
+            return color.gold;
+        default:
+            return (real) ? color.white : color.lgrey;
         }
     }
 
@@ -234,10 +232,73 @@ import * as socketStuff from "./lib/socketInit.js";
     global.mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
     var serverName = 'Connected';
     var provider = "Unknown";
-    window.onload = () => {
-        util.pullJSON("gamemodeData").then(json => {
-            document.getElementById('serverName').innerHTML = `<h4 class="nopadding">${json.gameMode} | ${json.players} Players</h4>`;
-        });
+    window.onload = async () => {
+        window.serverAdd = (await (await fetch("/serverData.json")).json()).ip;
+        if (Array.isArray(window.serverAdd)) {
+            window.isMultiserver = true;
+            const servers = window.serverAdd;
+            let serverSelector = document.getElementById("serverSelector"),
+                tbody = document.createElement("tbody");
+            serverSelector.style.display = "block";
+            document.getElementById("startMenuSlidingContent").removeChild(document.getElementById("serverName"));
+            serverSelector.classList.add("serverSelector");
+            serverSelector.classList.add("shadowscroll");
+            serverSelector.appendChild(tbody);
+            /*<tbody id="serverSelector">
+                                            <tr>
+                                                <td id="0">USA | OFFLINE | 0 / 0</td>
+                                            </tr>
+                                            <tr>
+                                                <td id="1">USA | OFFLINE | 0 / 0</td>
+                                            </tr>
+                                            <tr>
+                                                <td id="2">Europe | OFFLINE | 0 / 0</td>
+                                            </tr>
+                                            <tr>
+                                                <td id="3">Europe | OFFLINE | 0 / 0</td>
+                                            </tr>
+                                            <tr>
+                                                <td id="4">USA | OFFLINE | 0 / 0</td>
+                                            </tr>
+                                            <tr>
+                                                <td id="5">Localhost | OFFLINE | 0 / 0</td>
+                                            </tr>
+                                        </tbody>*/
+            let myServer = {
+                classList: {
+                    contains: () => false
+                }
+            };
+            servers.forEach(async (server) => {
+                try {
+                    const tr = document.createElement("tr");
+                    const td = document.createElement("td");
+                    td.textContent = `${server.gameMode} | ${server.players} Players`;
+                    td.onclick = () => {
+                        if (myServer.classList.contains("selected")) {
+                            myServer.classList.remove("selected");
+                        }
+                        tr.classList.add("selected");
+                        myServer = tr;
+                        window.serverAdd = server.ip;
+                        util.pullJSON("mockups").then(data => global.mockups = data);
+                    }
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                    myServer = tr;
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+            if (Array.from(myServer.children)[0].onclick) {
+                Array.from(myServer.children)[0].onclick();
+            }
+        } else {
+            util.pullJSON("mockups").then(data => global.mockups = data);
+            util.pullJSON("gamemodeData").then(json => {
+                document.getElementById('serverName').innerHTML = `<h4 class="nopadding">${json.gameMode} | ${json.players} Players</h4>`;
+            });
+        }
         // Save forms
         util.retrieveFromLocalStorage('playerNameInput');
         util.retrieveFromLocalStorage('playerKeyInput');
@@ -337,20 +398,20 @@ import * as socketStuff from "./lib/socketInit.js";
         config.lag.unresponsive = document.getElementById('optPredictive').checked;
         util.submitToLocalStorage('optBorders');
         switch (document.getElementById('optBorders').value) {
-            case 'normal':
-                config.graphical.darkBorders = config.graphical.neon = false;
-                break;
-            case 'dark':
-                config.graphical.darkBorders = true;
-                config.graphical.neon = false;
-                break;
-            case 'glass':
-                config.graphical.darkBorders = false;
-                config.graphical.neon = true;
-                break;
-            case 'neon':
-                config.graphical.darkBorders = config.graphical.neon = true;
-                break;
+        case 'normal':
+            config.graphical.darkBorders = config.graphical.neon = false;
+            break;
+        case 'dark':
+            config.graphical.darkBorders = true;
+            config.graphical.neon = false;
+            break;
+        case 'glass':
+            config.graphical.darkBorders = false;
+            config.graphical.neon = true;
+            break;
+        case 'neon':
+            config.graphical.darkBorders = config.graphical.neon = true;
+            break;
         }
         util.submitToLocalStorage('optColors');
         let a = document.getElementById('optColors').value;
@@ -417,13 +478,13 @@ import * as socketStuff from "./lib/socketInit.js";
                         }
                         // Decide what to do based on what type it is
                         switch (typeof newValue) {
-                            case 'number':
-                            case 'string': {
-                                if (newValue !== value) {
-                                    eh = true;
-                                }
+                        case 'number':
+                        case 'string': {
+                            if (newValue !== value) {
+                                eh = true;
                             }
-                            break;
+                        }
+                        break;
                         case 'object': {
                             if (Array.isArray(newValue)) {
                                 if (newValue.length !== value.length) {
@@ -498,14 +559,14 @@ import * as socketStuff from "./lib/socketInit.js";
                     let dim = ctx.measureText(text);
                     // Redraw it
                     switch (align) {
-                        case 'left':
-                            xx = offset;
-                            break;
-                        case 'center':
-                            xx = (dim.width + 2 * offset) / 2;
-                            break;
-                        case 'right':
-                            xx = (dim.width + 2 * offset) - offset;
+                    case 'left':
+                        xx = offset;
+                        break;
+                    case 'center':
+                        xx = (dim.width + 2 * offset) / 2;
+                        break;
+                    case 'right':
+                        xx = (dim.width + 2 * offset) - offset;
                     }
                     yy = (size + 2 * offset) / 2;
                     // Draw it
@@ -533,12 +594,12 @@ import * as socketStuff from "./lib/socketInit.js";
     // Gui drawing functions
     function drawGuiRect(x, y, length, height, stroke = false) {
         switch (stroke) {
-            case true:
-                ctx.strokeRect(x, y, length, height);
-                break;
-            case false:
-                ctx.fillRect(x, y, length, height);
-                break;
+        case true:
+            ctx.strokeRect(x, y, length, height);
+            break;
+        case false:
+            ctx.fillRect(x, y, length, height);
+            break;
         }
     }
 
@@ -798,7 +859,7 @@ import * as socketStuff from "./lib/socketInit.js";
     }
     // Start animation
     window.requestAnimFrame = (() => {
-        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
             //window.setTimeout(callback, 1000 / 60);
         };
     })();
@@ -854,7 +915,7 @@ import * as socketStuff from "./lib/socketInit.js";
             }
             // Useful thing
             function angleDifference(sourceA, targetA) {
-                let mod = function(a, n) {
+                let mod = function (a, n) {
                     return (a % n + n) % n;
                 };
                 let a = targetA - sourceA;
@@ -1110,7 +1171,7 @@ import * as socketStuff from "./lib/socketInit.js";
             };
             scaleScreenRatio(ratio, true);
             // Draw GUI
-            let alcoveSize = 200 / ratio;// / drawRatio * global.screenWidth;
+            let alcoveSize = 200 / ratio; // / drawRatio * global.screenWidth;
             let spacing = 20;
             gui.__s.update();
             let lb = leaderboard.get();
@@ -1143,53 +1204,53 @@ import * as socketStuff from "./lib/socketInit.js";
                                 upgrades
                             } = global.mockups[index];
                             switch (tier) {
-                                case 3:
-                                    return {
-                                        width: 1,
-                                            height: 1
-                                    };
-                                case 2:
-                                    upgrades.forEach((u, i) => measureSize(x, y + 2 + i, i, u));
-                                    branches.push([{
-                                        x,
-                                        y
-                                    }, {
-                                        x,
-                                        y: y + 1 + upgrades.length
-                                    }]);
-                                    return {
-                                        width: 1,
-                                            height: 2 + upgrades.length
-                                    };
-                                    //case 2:
-                                case 1:
-                                case 0: {
-                                    let xStart = x,
-                                        us = upgrades.map((u, i) => {
-                                            let spacing = 2 * (u.tier - tier),
-                                                measure = measureSize(x, y + spacing, i, u);
-                                            branches.push([{
-                                                x,
-                                                y: y + (i === 0 ? 0 : 1)
-                                            }, {
-                                                x,
-                                                y: y + spacing
-                                            }]);
-                                            if (i + 1 === upgrades.length) branches.push([{
-                                                x: xStart,
-                                                y: y + 1
-                                            }, {
-                                                x,
-                                                y: y + 1
-                                            }]);
-                                            x += measure.width;
-                                            return measure;
-                                        });
-                                    return {
-                                        width: us.map(r => r.width).reduce((a, b) => a + b, 0),
-                                        height: 2 + Math.max(...us.map(r => r.height))
-                                    };
-                                }
+                            case 3:
+                                return {
+                                    width: 1,
+                                        height: 1
+                                };
+                            case 2:
+                                upgrades.forEach((u, i) => measureSize(x, y + 2 + i, i, u));
+                                branches.push([{
+                                    x,
+                                    y
+                                }, {
+                                    x,
+                                    y: y + 1 + upgrades.length
+                                }]);
+                                return {
+                                    width: 1,
+                                        height: 2 + upgrades.length
+                                };
+                                //case 2:
+                            case 1:
+                            case 0: {
+                                let xStart = x,
+                                    us = upgrades.map((u, i) => {
+                                        let spacing = 2 * (u.tier - tier),
+                                            measure = measureSize(x, y + spacing, i, u);
+                                        branches.push([{
+                                            x,
+                                            y: y + (i === 0 ? 0 : 1)
+                                        }, {
+                                            x,
+                                            y: y + spacing
+                                        }]);
+                                        if (i + 1 === upgrades.length) branches.push([{
+                                            x: xStart,
+                                            y: y + 1
+                                        }, {
+                                            x,
+                                            y: y + 1
+                                        }]);
+                                        x += measure.width;
+                                        return measure;
+                                    });
+                                return {
+                                    width: us.map(r => r.width).reduce((a, b) => a + b, 0),
+                                    height: 2 + Math.max(...us.map(r => r.height))
+                                };
+                            }
                             }
                         },
                         full = measureSize(0, 0, 0, {
@@ -1432,10 +1493,10 @@ import * as socketStuff from "./lib/socketInit.js";
                     ctx.fillStyle = mixColors(getColor(entity.color), color.black, 0.3);
                     ctx.globalAlpha = entity.alpha;
                     switch (entity.type) {
-                        case 2: {
-                            drawGuiRect(x + ((entity.x - entity.size) / global.gameWidth) * len - 0.4, y + ((entity.y - entity.size) / global.gameHeight) * height - 1, ((2 * entity.size) / global.gameWidth) * len + 0.2, ((2 * entity.size) / global.gameWidth) * len + 0.2);
-                        }
-                        break;
+                    case 2: {
+                        drawGuiRect(x + ((entity.x - entity.size) / global.gameWidth) * len - 0.4, y + ((entity.y - entity.size) / global.gameHeight) * height - 1, ((2 * entity.size) / global.gameWidth) * len + 0.2, ((2 * entity.size) / global.gameWidth) * len + 0.2);
+                    }
+                    break;
                     case 1: {
                         drawGuiCircle(x + (entity.x / global.gameWidth) * len, y + (entity.y / global.gameHeight) * height, (entity.size / global.gameWidth) * len + 0.2);
                     }
@@ -1577,26 +1638,26 @@ import * as socketStuff from "./lib/socketInit.js";
                 global.clickables.upgrade.hide();
                 if (gui.upgrades.length > 0) {
                     global.canUpgrade = true;
-                    var getClassUpgradeKey = function(number) {
+                    var getClassUpgradeKey = function (number) {
                         switch (number) {
-                            case 0:
-                                return 'y';
-                            case 1:
-                                return 'h';
-                            case 2:
-                                return 'u';
-                            case 3:
-                                return 'j';
-                            case 4:
-                                return 'i';
-                            case 5:
-                                return 'k';
-                            case 6:
-                                return 'o';
-                            case 7:
-                                return 'l';
-                            default:
-                                return "N/A";
+                        case 0:
+                            return 'y';
+                        case 1:
+                            return 'h';
+                        case 2:
+                            return 'u';
+                        case 3:
+                            return 'j';
+                        case 4:
+                            return 'i';
+                        case 5:
+                            return 'k';
+                        case 6:
+                            return 'o';
+                        case 7:
+                            return 'l';
+                        default:
+                            return "N/A";
                         }
                     };
                     let internalSpacing = 8;
